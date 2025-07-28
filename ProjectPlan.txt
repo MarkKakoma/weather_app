@@ -1,0 +1,69 @@
+Weather App: Project Pathway
+
+1. Set up the basic project structure
+
+weather.html, weather.css, and weather.js
+Link all three files correctly in index.html
+Push this base to GitHub
+
+ 2. Design the basic UI (HTML + CSS)
+
+Add a search input (city name) and a submit/search button
+Create a section or card to display weather info
+Style with CSS: Make it clean, readable, responsive (use flexbox/grid)
+Optional: Add icons or background changes based on weather. 
+
+3. Choose & test your weather API
+
+Sign up at OpenWeatherMap or WeatherAPI
+Get your API key
+Read API docs for basic current weather endpoint
+
+4. Write JavaScript to fetch weather data
+
+On form submit or button click:
+Grab the user input (city name)
+Use fetch() to call the API
+Use async/await or .then() to handle the response
+Extract data like:
+City
+Temperature
+Weather condition
+Wind speed
+Icon
+Handle errors (e.g., invalid city name)
+
+5. Display weather data on the UI
+
+Create DOM elements or update existing ones
+Show temperature, description, and icons dynamically
+Format temperature (°C or °F)
+Optional: Add date/time of search
+
+6. Add features for functionality
+
+Show loading while fetching
+Save last searched city in localStorage
+Add toggle for °C/°F
+Add weather icons or animations (use icon from API or custom set)
+
+7. Polish the UI & make it responsive
+
+Test on different screen sizes
+Add hover/focus effects for inputs
+Use media queries to adapt layout
+Optional: Dark mode toggle
+
+8. Deploy the weather app
+
+Push final code to GitHub
+Enable GitHub Pages:
+Go to repo → Settings → Pages → Deploy from main → root
+Your app will be live at https://MarkKakoma.github.io/weather_app
+
+9. Additonally advanced features (later on)
+
+Forecast for next 3–5 days
+Search by coordinates (geolocation)
+Save search history
+Background changes based on weather/time
