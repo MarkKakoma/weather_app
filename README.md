@@ -15,4 +15,4 @@ This is a web application that allows users to access and view weather informati
 ## 📦 Tech Stack
 - HTML, CSS, JavaScript (Vanilla)
 - OpenWeatherMap API
-- GitHub Pages
+- GitHub Pages 
