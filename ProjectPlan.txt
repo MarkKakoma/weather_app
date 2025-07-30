@@ -3,7 +3,7 @@ Weather App: Project Pathway
 1. Set up the basic project structure
 
 weather.html, weather.css, and weather.js
-Link all three files correctly in index.html
+Link all three files correctly in weather.html
 Push this base to GitHub
 
  2. Design the basic UI (HTML + CSS)
@@ -31,7 +31,7 @@ Temperature
 Weather condition
 Wind speed
 Icon
-Handle errors (e.g., invalid city name)
+Handle errors (Invalid city name)
 
 5. Display weather data on the UI
 
