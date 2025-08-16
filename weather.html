@@ -15,8 +15,15 @@
 
 
         <div id="locator">
-            <input list="locations" id="citysearch" type="search" placeholder="search city"> 
-            <button id="city_submit">Search</button>
+                <input list="locations" id="citysearch" type="search" placeholder="search city"> 
+                <button id="city_submit">Search</button>
+                
+                <div id="location_options">
+                        <select id="options" value="Options">
+
+                        
+                        </select>
+                </div>
         </div>
 
         <div id="controls">
@@ -39,30 +46,29 @@
     
     <div id="bottom_info">
 
-        <div id="primary_display_box">
-            <h4 id="time/date">07/28/2025</h4>
-            <h1 id="city_name">Kigali</h1>
-            <h2 id="temperature">12C</h2>
-            <h3 id="temperature_feels">9C</h3>
-            <h4 id="precipitation">2%</h4>
-            <h4 id="pressure">110hPa</h4>
-            <h4 id="humidity">24%</h4>
+        <div id="primary_display_box_current_weather">
+            <h4 id="time/date">date: </h4>
+            <h1 id="city_name">Location_name: </h1>
+            <h2 id="temperature">metric_temperature: </h2>
+            <h3 id="temperature_feels">metric_temperature_feels: </h3>
+            <h4 id="precipitation">precipitation_percentage: </h4>
+            <h4 id="pressure">pressure_in_hPa: </h4>
+            <h4 id="humidity">humidity_percentage: </h4>
 
-            <p id="weather_description">blah, blah, blah</p>
+            <p id="weather_description">weather_text</p>
 
         </div>
 
-        <div id="secondary_display_box">
-            <h3 id="uv_index">34%</h3>
-            <h3 id="visibility">20km</h3>
-            <h4 id="sunset_time">6:45pm</h4>
-            <h4 id="sunrise_time">6:15am</h4>
-            <h4 id="wind_direction">NE 67knots</h4>
+        <div id="secondary_display_box_current_weather">
+            <h3 id="uv_index">uv_index_percentage: </h3>
+            <h3 id="visibility">visibility_distance: </h3>
+            <h4 id="sunset_time">sunset_time: </h4>
+            <h4 id="sunrise_time">sunrise_time: </h4>
+            <h4 id="wind_direction">Wind_Speed_and_direction: </h4>
 
         </div>
 
         <div id="hourly_forcast">
-
 
         </div>
 
@@ -72,42 +78,42 @@
 
         <div id="future_forecasts">
             <div class="fut_frsct" id="day_1_frcst">
-                <h3 id="day1">Mon</h3v>
+                <h3 id="day1">Mon:</h3v>
                 <h3 id="temp1"></h3>
                 <h3 id="temp1_feels"></h3>
                 <h3 id="precip1"></h3>
 
             </div>
             <div class="fut_frsct" id="day_2_frcst">
-                <h3 id="day2">Tue</h3v>
-                <h3 id="temp2"> 12C</h3>
+                <h3 id="day2">Tue:</h3v>
+                <h3 id="temp2"></h3>
                 <h3 id="temp2_feels">10C</h3>
                 <h3 id="precip2">34mm</h3>
 
             </div>
             <div class="fut_frsct" id="day_3_frcst">
-                <h3 id="day3">Wed</h3v>
+                <h3 id="day3">Wed:</h3v>
                 <h3 id="temp3"></h3>
                 <h3 id="temp3_feels"></h3>
                 <h3 id="precip3"></h3>
 
             </div>
             <div class="fut_frsct" id="day_4_frcst">
-                <h3 id="day4">Thu</h3v>
+                <h3 id="day4">Thu:</h3v>
                 <h3 id="temp4"></h3>
                 <h3 id="temp4_feels"></h3>
                 <h3 id="precip4"></h3>
 
             </div>
             <div class="fut_frsct" id="day_5_frcst">
-                <h3 id="day5">Fri</h3v>
+                <h3 id="day5">Fri:</h3v>
                 <h3 id="temp5"></h3>
                 <h3 id="temp5_feels"></h3>
                 <h3 id="precip5"></h3>
 
             </div>
             <div class="fut_frsct" id="day_6_frcst">
-                <h3 id="day6">Sat</h3v>
+                <h3 id="day6">Sat:</h3v>
                 <h3 id="temp6"></h3>
                 <h3 id="temp6_feels"></h3>
                 <h3 id="precip6"></h3>
@@ -115,7 +121,7 @@
             </div>
 
             <div class="fut_frsct" id="day_7_frcst">
-                <h3 id="day6">Sun</h3v>
+                <h3 id="day6">Sun:</h3v>
                 <h3 id="temp6"></h3>
                 <h3 id="temp6_feels"></h3>
                 <h3 id="precip6"></h3>
