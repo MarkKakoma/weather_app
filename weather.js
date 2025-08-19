@@ -136,7 +136,7 @@ async function retrieveWeatherData(latitude, longitude){
         const weather_data = await fetch (`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=daylight_duration,sunshine_duration,sunset,sunrise,uv_index_max,temperature_2m_max,temperature_2m_min,wind_speed_10m_max,precipitation_sum,rain_sum,temperature_2m_mean,apparent_temperature_mean,relative_humidity_2m_mean,precipitation_probability_mean,pressure_msl_mean,surface_pressure_mean,visibility_mean,winddirection_10m_dominant,wind_speed_10m_mean,weather_code&hourly=temperature_2m,rain,relative_humidity_2m,apparent_temperature,precipitation,surface_pressure,visibility,uv_index,sunshine_duration&current=relative_humidity_2m,is_day,temperature_2m,precipitation,rain,surface_pressure,wind_direction_10m,wind_speed_10m,apparent_temperature,weather_code`);
         const weather_json_data = await weather_data.json();
 
-        //Weather metrics variables
+        //Weather metrics variables (Quantitative)
         const temperature =  weather_json_data.current.temperature_2m;
         const temperature_feels = weather_json_data.current.apparent_temperature;
         const humidity = weather_json_data.current.relative_humidity_2m;
@@ -145,9 +145,15 @@ async function retrieveWeatherData(latitude, longitude){
         const wind_speed_ = weather_json_data.current.wind_speed_10m;
         const precipitation = weather_json_data.current.precipitation;
         const pressure = weather_json_data.current.surface_pressure;
+        
+        //Weather code descriptions (Qualitative)
+        const weather_code = weather_json_data.current.weather_code;
+        const weather_description = weatherCodeInterpreter(weather_code);
+
 
         console.log(temperature);
         console.log(weather_json_data); 
+        console.log(weather_description);
         return weather_json_data;
     }
     catch(error){
@@ -159,8 +165,72 @@ async function retrieveWeatherData(latitude, longitude){
 
 // Display weather data based on selected Coordinates
 
+// Interpreting weather codes for descriptive qualitative information
 
+function weatherCodeInterpreter(weather_code){
 
+    let conditions;
+
+    switch(weather_code){
+        case 0:
+            conditions = 'Clear sky';
+            break;
+        case 1:
+        case 2:
+        case 3:
+            conditions = 'Mainly clear, partly cloudy, and overcast';
+            break;
+        case 45:
+        case 48:
+            conditions = 'Fog and depositing rime fog';
+            break;
+        case 51:
+        case 53:
+        case 55:
+            conditions = 'Drizzle: Light, moderate, and dense intensity';
+            break;
+        case 56:
+        case 57:
+            conditions = 'Freezing Drizzle: Light and dense intensity';
+            break;
+        case 61:
+        case 63:
+        case 65:
+            conditions = 'Rain: Slight, moderate and heavy intensity';
+            break;
+        case 66:
+        case 67:
+            conditions = 'Freezing Rain: Light and heavy intensity';
+            break;
+        case 71:
+        case 73:
+        case 75:
+            conditions = 'Snow fall: Slight, moderate, and heavy intensity';
+            break;
+        case 77:
+            conditions = 'Snow grains';
+            break;
+        case 80:
+        case 81:
+        case 82:
+            conditions = 'Rain showers: Slight, moderate, and violent';
+            break;
+        case 85:
+        case 86:
+            conditions = 'Snow showers slight and heavy';
+            break;
+        case 95:
+            conditions = 'Thunderstorm: Slight or moderate';
+            break;
+        case 96:
+        case 99:
+            conditions = 'Thunderstorm with slight and heavy hail';
+            break;
+        default:
+            conditions = 'No weather description available at the moment.'
+    }
+    return conditions;
+} 
 
 
 
