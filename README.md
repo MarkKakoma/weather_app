@@ -4,8 +4,8 @@ This is a web application that allows users to access and view weather informati
 ## ✅ Project Tasks
 
 - [x] Setup project structure (HTML, CSS, JS)
-- [ ] Build search input and weather display layout
-- [ ] Connect to OpenWeatherMap API
+- [x] Build search input and weather display layout
+- [x] Connect to OpenMeteo API
 - [ ] Display current temperature and conditions
 - [ ] Handle loading and error states
 - [ ] Style for mobile and desktop
@@ -13,5 +13,5 @@ This is a web application that allows users to access and view weather informati
 
 ## 📦 Tech Stack
 - HTML, CSS, JavaScript (Vanilla)
-- OpenWeatherMap API
+- OpenMeteo API
 - GitHub Pages

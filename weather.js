@@ -21,8 +21,6 @@ switches.forEach(label => {
 
 
 
-
-
 //Part B: Hard backend logic for fetching weather and location data for UX. 
 
 //Geocoding location data: Retreiving geolocation data from location input
@@ -140,21 +138,58 @@ async function retrieveWeatherData(latitude, longitude){
         const temperature =  weather_json_data.current.temperature_2m;
         const temperature_feels = weather_json_data.current.apparent_temperature;
         const humidity = weather_json_data.current.relative_humidity_2m;
-        const date_and_time = weather_json_data.current.time;
         const wind_direction = weather_json_data.current.wind_direction_10m;
-        const wind_speed_ = weather_json_data.current.wind_speed_10m;
+        const wind_speed = weather_json_data.current.wind_speed_10m;
         const precipitation = weather_json_data.current.precipitation;
         const pressure = weather_json_data.current.surface_pressure;
+
+        //date and time metrics
+        const date_and_time = weather_json_data.current.time.split('T');
+        const date = date_and_time[0];
+        const time = date_and_time[1];
+        
+
+        //UV_Index and Visibility Metrics
+        const uv_index = weather_json_data.hourly.uv_index;
+        const uv_index_sum = uv_index.reduce((accumulator, currentValue) => {
+            return accumulator + currentValue;
+        }, 0);
+        const average_uv_index = uv_index_sum / 168;
+
+        const visibility = weather_json_data.hourly.visibility;
+        const visibility_sum = visibility.reduce((accumulator, currentValue) => {
+            return accumulator + currentValue;
+        },0);
+        const average_visibilty = visibility_sum / 168;
         
         //Weather code descriptions (Qualitative)
         const weather_code = weather_json_data.current.weather_code;
         const weather_description = weatherCodeInterpreter(weather_code);
 
+        //Sunrise, Sunset and dayligh_hours data (current)
+        const daylight_data = weather_json_data.daily.daylight_duration[0];
+        const sunrise_data = weather_json_data.daily.sunrise[0];
+        const sunset_data = weather_json_data.daily.sunset[0];
+        const sunrise_day = sunrise_data.split('T');
+        const sunset_day = sunset_data.split('T');
+
+        const daylight = convertS_to_H(daylight_data);
+        const sunrise = sunrise_day[1];
+        const sunset = sunset_day[1];
+
+        //location 
+        //await locationStuff();
+        
+       
+        //Displaying to the DOM
+        await displayWeather(temperature,temperature_feels,humidity,date,time,wind_direction,wind_speed,precipitation,pressure,average_uv_index,weather_description, daylight,sunset,sunrise);
+
+        //Tests
 
         console.log(temperature);
         console.log(weather_json_data); 
         console.log(weather_description);
-        return weather_json_data;
+        return temperature,temperature_feels,humidity,wind_direction,wind_speed,precipitation,pressure,average_uv_index,average_visibilty,date,time,sunrise,sunset,daylight;
     }
     catch(error){
         console.log(`Error retrieving weather data:`, error);
@@ -164,6 +199,57 @@ async function retrieveWeatherData(latitude, longitude){
 }
 
 // Display weather data based on selected Coordinates
+
+
+async function displayWeather(temp, temp_feels, humidity, date_info, time_info, wind_direct, wind_speed, precipitation, pressure, uv, weather_descrition, daylight_hours, sunset_time,sunrise_time){
+    //date and time information
+    const date = document.getElementById('date');
+    const time = document.getElementById('time');
+    date.textContent = date_info.toString();
+    time.textContent = time_info.toString();
+
+    //temperature information
+    const temperature = document.getElementById('temperature');
+    const temperature_feels = document.getElementById('temperature_feels');
+    temperature.textContent = temp.toString();
+    temperature_feels.textContent = temp_feels.toString();
+
+    //wind inforamtion
+    const wind_direction = document.getElementById('wind_speed');
+    const wind_speeds = document.getElementById('wind_direction'); 
+    wind_direction.textContent = wind_direct.toString();
+    wind_speeds.textContent = wind_speed.toString();
+
+    //humidity and precipitation
+    const humidity_info = document.getElementById('humidity');
+    const precip = document.getElementById('precipitation');
+    humidity_info.textContent = humidity.toString();
+    precip.textContent = precipitation.toString();
+
+    //pressure and uv_index 
+    const pressure_info = document.getElementById('pressure');
+    const uv_index_info = document.getElementById('uv_index');
+    pressure_info.textContent = pressure.toString();
+    uv_index_info.textContent = uv.toString();
+
+    //location and weather_description
+    const location_info = document.getElementById('city_name');
+    const qualitative_weather = document.getElementById('weather_description');
+    location_info.textContent = location.toString();
+    qualitative_weather.textContent = weather_descrition.toString();
+    
+    //Sunrise, Sunset and daylight_hours**
+    const sunshine = document.getElementById('daylight_hours');
+    const sunrise = document.getElementById('sunrise');
+    const sunset = document.getElementById('sunset');
+    sunshine.textContent = daylight_hours.toString();
+    sunrise.textContent = sunrise_time.toString();
+    sunset.textContent = sunset_time.toString();
+
+    
+
+}
+
 
 // Interpreting weather codes for descriptive qualitative information
 
@@ -232,44 +318,48 @@ function weatherCodeInterpreter(weather_code){
     return conditions;
 } 
 
+//Converting seconds into hours for daylight hours
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-fetch(weather_url)
-    .then(response => 
-        {response.json()})
-    .catch(error => {
-        console.error("Error fetching weather data", error);
-    });
-*/
-
-// retrieves weather data from weather JSON file. 
-/*function retrieveWeatherData(location){
-    return new Promise((resolve, reject) => {
-
-    });
+function convertS_to_H(seconds){
+    const absolute_hours = seconds/3600; 
+    const hours_string = absolute_hours.toString();
     
+    hours_string.split('.');
+    const hours = hours_string[0];
+    const minutes = Number(hours_string[0])/60;
+    const minutes_string = minutes.toString();
+
+    const final_time = hours + ":" + minutes_string;
+    return final_time;
+
 };
 
-*/
+
+
+//location displayer
+ async function locationStuff(){
+            let location = '';
+
+            let textbox_value = document.getElementById('citysearch');
+            const selected_value = document.getElementById('options');
+            const option = selected_value.value;
+
+            if(selected_value === ''){
+                location.textContent = textbox_value.value;
+            }
+            else{
+                location.textContent = option;
+            };
+
+            return location;
+
+        };
+
+
+
+
+
+
+
+
 
