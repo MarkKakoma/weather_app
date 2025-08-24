@@ -131,7 +131,7 @@ changeCoordinates();
 async function retrieveWeatherData(latitude, longitude){
 
     try{
-        const weather_data = await fetch (`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=daylight_duration,sunshine_duration,sunset,sunrise,uv_index_max,temperature_2m_max,temperature_2m_min,wind_speed_10m_max,precipitation_sum,rain_sum,temperature_2m_mean,apparent_temperature_mean,relative_humidity_2m_mean,precipitation_probability_mean,pressure_msl_mean,surface_pressure_mean,visibility_mean,winddirection_10m_dominant,wind_speed_10m_mean,weather_code&hourly=temperature_2m,rain,relative_humidity_2m,apparent_temperature,precipitation,surface_pressure,visibility,uv_index,sunshine_duration&current=relative_humidity_2m,is_day,temperature_2m,precipitation,rain,surface_pressure,wind_direction_10m,wind_speed_10m,apparent_temperature,weather_code`);
+        const weather_data = await fetch (`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&timezone=auto&daily=daylight_duration,sunshine_duration,sunset,sunrise,uv_index_max,temperature_2m_max,temperature_2m_min,wind_speed_10m_max,precipitation_sum,rain_sum,temperature_2m_mean,apparent_temperature_mean,relative_humidity_2m_mean,precipitation_probability_mean,pressure_msl_mean,surface_pressure_mean,visibility_mean,winddirection_10m_dominant,wind_speed_10m_mean,weather_code&hourly=temperature_2m,rain,relative_humidity_2m,apparent_temperature,precipitation,surface_pressure,visibility,uv_index,sunshine_duration&current=relative_humidity_2m,is_day,temperature_2m,precipitation,rain,surface_pressure,wind_direction_10m,wind_speed_10m,apparent_temperature,weather_code`);
         const weather_json_data = await weather_data.json();
 
         //Weather metrics variables (Quantitative)
@@ -142,6 +142,74 @@ async function retrieveWeatherData(latitude, longitude){
         const wind_speed = weather_json_data.current.wind_speed_10m;
         const precipitation = weather_json_data.current.precipitation;
         const pressure = weather_json_data.current.surface_pressure;
+
+        // Next Days Arrays
+        const next_days_temps = weather_json_data.daily.temperature_2m_mean;
+        const next_days_temp_feels = weather_json_data.daily.apparent_temperature_mean;
+        const next_days_precip = weather_json_data.daily.precipitation_sum;
+
+        async function displayNextDaysWeather(){
+    
+                const dayElements = [
+    
+                    document.getElementById('day1'),
+                    document.getElementById('day2'),
+                    document.getElementById('day3'),
+                    document.getElementById('day4'),
+                    document.getElementById('day5'),
+                    document.getElementById('day6'),
+
+                    ];
+
+                const temp = [
+                    document.getElementById('temp1'),
+                    document.getElementById('temp2'),
+                    document.getElementById('temp3'),
+                    document.getElementById('temp4'),
+                    document.getElementById('temp5'),
+                    document.getElementById('temp6'),
+
+                    ];
+
+                const temp_feels = [
+                    document.getElementById('temp1_feels'),
+                    document.getElementById('temp2_feels'),
+                    document.getElementById('temp3_feels'),
+                    document.getElementById('temp4_feels'),
+                    document.getElementById('temp5_feels'),
+                    document.getElementById('temp6_feels'),
+
+                    ];
+
+                const precip = [
+                    document.getElementById('precip1'),
+                    document.getElementById('precip2'),
+                    document.getElementById('precip3'),
+                    document.getElementById('precip4'),
+                    document.getElementById('precip5'),
+                    document.getElementById('precip6'),
+
+                    ];
+
+
+                    for(let i = 0; i < dayElements.length; i++){
+                        dayElements[i].textContent = proceeding_days_array[i];
+
+                    };
+                    for(let i = 0; i < temp.length; i++){
+                        temp[i].textContent =  next_days_temps[i] + " °";
+
+                    };
+                    for(let i = 0; i < temp_feels.length; i++){
+                        temp_feels[i].textContent = 'Feels like: ' + next_days_temp_feels[i] + " °";
+
+                    };
+                    for(let i = 0; i < precip.length; i++){
+                        precip[i].textContent = next_days_precip[i] + ' mm';
+
+                    };
+
+}
 
         //date and time metrics
         const date_and_time = weather_json_data.current.time.split('T');
@@ -154,13 +222,11 @@ async function retrieveWeatherData(latitude, longitude){
         const uv_index_sum = uv_index.reduce((accumulator, currentValue) => {
             return accumulator + currentValue;
         }, 0);
-        const average_uv_index = uv_index_sum / 168;
+        const average_uv_index = parseFloat((uv_index_sum / 168).toFixed(2));
 
-        const visibility = weather_json_data.hourly.visibility;
-        const visibility_sum = visibility.reduce((accumulator, currentValue) => {
-            return accumulator + currentValue;
-        },0);
-        const average_visibilty = visibility_sum / 168;
+        const visibility = weather_json_data.daily.visibility_mean[0];
+        
+        const average_visibilty = Math.floor((visibility / 1000), 2);
         
         //Weather code descriptions (Qualitative)
         const weather_code = weather_json_data.current.weather_code;
@@ -182,8 +248,12 @@ async function retrieveWeatherData(latitude, longitude){
         
        
         //Displaying to the DOM
-        await displayWeather(temperature,temperature_feels,humidity,date,time,wind_direction,wind_speed,precipitation,pressure,average_uv_index,weather_description, daylight,sunset,sunrise);
+        await displayWeather(temperature,temperature_feels,humidity,date,time,wind_direction,wind_speed,precipitation,pressure,average_uv_index,weather_description, daylight,sunset,sunrise,average_visibilty);
 
+
+        // 
+
+        await displayNextDaysWeather();
         //Tests
 
         console.log(temperature);
@@ -201,50 +271,52 @@ async function retrieveWeatherData(latitude, longitude){
 // Display weather data based on selected Coordinates
 
 
-async function displayWeather(temp, temp_feels, humidity, date_info, time_info, wind_direct, wind_speed, precipitation, pressure, uv, weather_descrition, daylight_hours, sunset_time,sunrise_time){
+async function displayWeather(temp, temp_feels, humidity, date_info, time_info, wind_direct, wind_speed, precipitation, pressure, uv, weather_descrition, daylight_hours, sunset_time,sunrise_time, visibility){
     //date and time information
     const date = document.getElementById('date');
     const time = document.getElementById('time');
-    date.textContent = date_info.toString();
-    time.textContent = time_info.toString();
+    date.textContent = 'Date: ' + date_info.toString();
+    time.textContent = 'Time: ' + time_info.toString();
 
     //temperature information
     const temperature = document.getElementById('temperature');
     const temperature_feels = document.getElementById('temperature_feels');
-    temperature.textContent = temp.toString();
-    temperature_feels.textContent = temp_feels.toString();
+    temperature.textContent = 'Temperature: ' + temp.toString() ;
+    temperature_feels.textContent = 'Feels like: ' + temp_feels.toString();
 
     //wind inforamtion
     const wind_direction = document.getElementById('wind_speed');
     const wind_speeds = document.getElementById('wind_direction'); 
-    wind_direction.textContent = wind_direct.toString();
-    wind_speeds.textContent = wind_speed.toString();
+    wind_direction.textContent = 'Wind Direction: ' + wind_direct.toString() + ' °';
+    wind_speeds.textContent = 'Wind Speed: ' + wind_speed.toString() + ' km/h';
 
     //humidity and precipitation
     const humidity_info = document.getElementById('humidity');
     const precip = document.getElementById('precipitation');
-    humidity_info.textContent = humidity.toString();
-    precip.textContent = precipitation.toString();
+    humidity_info.textContent = 'Humidity: ' + humidity.toString() + ' %';
+    precip.textContent = 'Precipitation: ' + precipitation.toString() + ' mm';
 
     //pressure and uv_index 
     const pressure_info = document.getElementById('pressure');
     const uv_index_info = document.getElementById('uv_index');
-    pressure_info.textContent = pressure.toString();
-    uv_index_info.textContent = uv.toString();
+    pressure_info.textContent = 'Pressure: ' + pressure.toString() + ' hPa';
+    uv_index_info.textContent = 'UV-Index: ' + uv.toString();
 
-    //location and weather_description
+    //location,visibility and weather_description
     const location_info = document.getElementById('city_name');
+    const visibility_info = document.getElementById('visibility');
     const qualitative_weather = document.getElementById('weather_description');
     location_info.textContent = location.toString();
     qualitative_weather.textContent = weather_descrition.toString();
+    visibility_info.textContent = 'Visibility: ' + visibility.toString() + ' km;  Model clear-air visibility (may exceed practical ground conditions).';
     
-    //Sunrise, Sunset and daylight_hours**
+    //Sunrise, Sunset and daylight_hours
     const sunshine = document.getElementById('daylight_hours');
     const sunrise = document.getElementById('sunrise');
     const sunset = document.getElementById('sunset');
-    sunshine.textContent = daylight_hours.toString();
-    sunrise.textContent = sunrise_time.toString();
-    sunset.textContent = sunset_time.toString();
+    sunshine.textContent = 'Daylight Hours: ' + daylight_hours.toString();
+    sunrise.textContent = 'Sunrise Time: ' + sunrise_time.toString() + ' am';
+    sunset.textContent = 'Sunset Time: ' + sunset_time.toString() + ' pm';
 
     
 
@@ -320,19 +392,11 @@ function weatherCodeInterpreter(weather_code){
 
 //Converting seconds into hours for daylight hours
 
-function convertS_to_H(seconds){
-    const absolute_hours = seconds/3600; 
-    const hours_string = absolute_hours.toString();
-    
-    hours_string.split('.');
-    const hours = hours_string[0];
-    const minutes = Number(hours_string[0])/60;
-    const minutes_string = minutes.toString();
-
-    const final_time = hours + ":" + minutes_string;
-    return final_time;
-
-};
+function convertS_to_H(seconds) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  return hours + ' hrs ' + minutes.toString().padStart(2, '0') + ' min';
+}
 
 
 
@@ -356,10 +420,123 @@ function convertS_to_H(seconds){
         };
 
 
+//Next days general info
+
+const week = [
+    'Sunday:',
+    'Monday:',
+    'Tuesday:',
+    'Wednesday:',
+    'Thursday:',
+    'Friday:',
+    'Saturday:'
+];
+
+const today = new Date();
+const dayName = week[today.getDay()];
+//console.log(dayName);
+
+//let appended_list = [];
+
+function weatherDaysValue(current_day_key){
+    appended_list = [];
+
+    for(let i = current_day_key; i < Object.keys(week); i++){
+        appended_list.push(week[i]);
+        
+
+    }
+    
+    
+}
 
 
+// function to sort day looping. This function will store the following 6 days after the current day in an array called proceeding_days_array. 
+
+let proceeding_days_array = [];
+
+function sortDays(){
+    proceeding_days_array = [];
+    if(week.includes(dayName)){
+        for(let i = 1; i<=6; i++){
+            let proceeding_days = week[((today.getDay() + i) % 7)];
+
+            proceeding_days_array.push(proceeding_days);
+
+        };
+    };
+    return proceeding_days_array;
+    
+    
+
+}
+
+// function to display the accurate days in the DOM and receive the correct weather data for those days. 
+
+async function displayNextDaysWeather(){
+    
+    const dayElements = [
+    
+    document.getElementById('day1'),
+    document.getElementById('day2'),
+    document.getElementById('day3'),
+    document.getElementById('day4'),
+    document.getElementById('day5'),
+    document.getElementById('day6'),
+
+];
+
+const temp = [
+    document.getElementById('temp1'),
+    document.getElementById('temp2'),
+    document.getElementById('temp3'),
+    document.getElementById('temp4'),
+    document.getElementById('temp5'),
+    document.getElementById('temp6'),
+
+];
+
+const temp_feels = [
+    document.getElementById('temp1_feels'),
+    document.getElementById('temp2_feels'),
+    document.getElementById('temp3_feels'),
+    document.getElementById('temp4_feels'),
+    document.getElementById('temp5_feels'),
+    document.getElementById('temp6_feels'),
+
+];
+
+const precip = [
+    document.getElementById('precip1'),
+    document.getElementById('precip2'),
+    document.getElementById('precip3'),
+    document.getElementById('precip4'),
+    document.getElementById('precip5'),
+    document.getElementById('precip6'),
+
+];
 
 
+    for(let i = 0; i < dayElements.length; i++){
+        dayElements[i].textContent = proceeding_days_array[i];
+
+    };
+    for(let i = 1; i < temp.length; i++){
+        temp[i].textContent = next_days_temps[i];
+
+    };
+    for(let i = 1; i < temp_feels.length; i++){
+        temp_feels[i].textContent = next_days_temp_feels[i];
+
+    };
+    for(let i = 1; i < precip.length; i++){
+        precip[i].textContent = next_days_precip[i];
+
+    };
+
+}
 
 
-
+document.addEventListener('DOMContentLoaded', () => {
+    sortDays();
+});
